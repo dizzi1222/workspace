@@ -340,4 +340,3 @@ de ventanas + buffers de un proyecto (layout de splits, archivos abiertos).
 > `nvim/.config/nvim/lua/plugins/ui.lua:473`), igual que `<leader>ql`.
 > ⚠️ Debe ser una **función**, no un string `"lua …"`, o snacks lo
 > interpreta como un picker de `scratch` y rompe (error E5108 de lazy.nvim).
-
