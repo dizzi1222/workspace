@@ -29,6 +29,8 @@ git submodule update --init --recursive portafolio-eric-godtier
 git submodule update --init --recursive jscamp
 git submodule update --init --recursive dhardi.dev
 git submodule update --init --recursive opencode-discord-rpc
+git submodule update --init --recursive opencode.nvim
+git submodule update --init --recursive neocursor.nvim
 
 echo ""
 echo "${AMARILLO}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${RESET}"
@@ -68,6 +70,8 @@ cd ../portafolio-eric-godtier/ && git checkout main
 cd ../jscamp/ && git checkout main
 cd ../dhardi.dev/ && git checkout main
 cd ../opencode-discord-rpc/ && git checkout main
+cd ../opencode.nvim/ && git checkout main
+cd ../neocursor.nvim/ && git checkout main
 
 # Volver a la raíz del workspace
 cd "$(dirname "$0")"

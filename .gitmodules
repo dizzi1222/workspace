@@ -58,3 +58,11 @@
 	path = opencode-discord-rpc
 	url = https://github.com/dizzi1222/opencode-discord-rpc.git
 	branch = main
+[submodule "opencode.nvim"]
+	path = opencode.nvim
+	url = https://github.com/dizzi1222/opencode.nvim
+	branch = main
+[submodule "neocursor.nvim"]
+	path = neocursor.nvim
+	url = https://github.com/dizzi1222/neocursor.nvim
+	branch = main

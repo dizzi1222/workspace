@@ -23,6 +23,8 @@ Workspace con proyectos como submódulos y repos independientes.
 | 15  | `ptd-talento-front` ⭐                      | — La cara de Martketplace de Talento (repo independiente) |
 | 16  | `portafolio-eric-godtier`                 | — Portfolio de un buen amigo, fuente de inspiracion  |
 | 17  | `jscamp`                                  | — Bootcamp Fullstack midudev (JS, React, Node, Docker, CI/CD) |
+| 18  | `opencode.nvim` 🐐🗣️                          | — Fork de opencode.nvim (NickvanDyke) con parches nativos: `@buffer`/`@buffers` emiten rutas absolutas |
+| 19  | `neocursor.nvim`                           | — Fork de neocursor.nvim (refactor a indentación 2 espacios) |
 
 ## 🔧 Restaurar todos los proyectos
 
