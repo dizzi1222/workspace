@@ -60,6 +60,7 @@ Cada registro de sesión lleva **fecha inicial** al frente, para alinear la evid
 - `vim-dap-debug.md` — cómo usar el debugger nvim-dap (flujo completo + errores comunes + configuración real)
 - `vim-dap-fix-plan.md` — PLAN pendiente: arreglar nvim-dap multi-lenguaje (C++/Rust/Go/C#/Java/PHP) tras restaurar el archivo. Incluye diagnóstico de cada fallo + fixes a aplicar gradualmente. La UI (layout con títulos por sección) YA quedó corregida.
 - `cursor-tab.md` — cursortab.nvim: los 9 providers (inline/fim/sweep/zeta-* con llama-server local :8000 vs mercury/copilot/windsurf cloud), comandos de arranque del GGUF, keymaps, benchmarks y comparativa con nextedit/sweep-nvim/blink-edit/tabtab/neocursor. Incluye síntoma de disco lleno (`common_pull_file: error writing to file`).
+- `bro-interview.md` — set de preguntas de entrevista técnica JS/TS que Diego recibió de su hermano (Vanzuh): preguntas previas, técnicas, ejercicio de scope `let`/`var`, extras del chat (`Promise.all` vs `allSettled`, `map` vs `forEach`, IIFE, SCSS) y la prueba técnica de la casa (todo app + API). Incluye notas del Profesor por pregunta. Sin fecha: es compendio continuo.
 
 ### Referencias externas (fuera de AGENT-records/)
 

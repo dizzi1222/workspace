@@ -266,6 +266,33 @@ selección (modo visual).
 3. Apretás `O` → el cursor salta al **otro extremo** de la selección; ahora `j`/`k` extienden
    hacia el lado contrario. (En `Ctrl+V` alterna entre las 4 esquinas.)
 
+## Visual block (`Ctrl+V`) — selección en "rectángulo" ⭐
+
+Es el modo visual que selecciona un **bloque rectangular** de texto (varias
+líneas × varias columnas), a diferencia de `v` (caracteres) y `V` (líneas
+completas).
+
+| Modo visual    | Tecla      | Selecciona                    |
+| -------------- | ---------- | ----------------------------- |
+| Carácter       | `v`        | flujo de caracteres           |
+| Línea          | `V`        | líneas enteras                |
+| **Bloque**     | `Ctrl+V`   | **rectángulo** (columna) ⭐    |
+
+### Para qué sirve
+
+- **Insertar** texto en TODAS las líneas del bloque a la vez:
+  `Ctrl+V` → marcar con `j`/`k` → `I` (insertar al inicio) o `A` (al final) →
+  escribir → `<Esc>` (o `<Esc><Esc>` en algunos casos) aplica el cambio en todas.
+- **Comentar** muchas líneas de golpe: `Ctrl+V` → `j/k` → `I` → `# ` (o el
+  comentario del lenguaje) → `<Esc>`.
+- **Borrar una columna** en varias líneas: `Ctrl+V` → `j/k` → `x`/`d`.
+- **Vim no reemplaza** con `r` en visual block (solo el primer carácter);
+  para reemplazar una columna entera se usa `c` (cambiar) o `s`.
+- Con `O` se alterna entre esquinas del rectángulo (ver sección de mover bloques).
+
+> Ejemplo rápido: para formatear una tabla, alinear código, o comentar/descomentar
+> bloques en múltiples lenguajes a la vez. Es el "multi-cursor" de Vim sin plugins.
+
 ## Regla de oro
 
 > **Siempre buscar con `rg` / `Space+/`,
