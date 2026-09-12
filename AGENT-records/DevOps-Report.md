@@ -9,14 +9,15 @@ Solo documentación: **no se tocó código** (las correcciones quedan para el eq
 
 Ticket de seguimiento: [#190 [INV] QA/PROD: 401 en login-reclutador y auditoría; 500 en solicitudes y reset-password](https://github.com/Cincinnatus-Institute-of-Craftsmanship/ptd-talento-back/issues/190) ✅
 
-### 1. Login de reclutador devuelve 401
+### 1. Login de reclutador devuelve 401 — ✅ RESUELTO
 
 - **Comportamiento:** al iniciar sesión con un reclutador existente en QA, el backend responde `401`.
-- **Causa raíz:** el correo del reclutador no existe en la tabla `user` de `talento-qa`
-  (los reclutadores fueron creados en dev y prod, no en QA). La autenticación falla por
+- **Causa raíz:** el correo del reclutador no existía en la tabla `user` de `talento-qa`
+  (los reclutadores fueron creados en dev y prod, no en QA). La autenticación fallaba por
   usuario inexistente, no por credenciales.
-- **Estado:** reportado. Solución = crear/verificar los reclutadores en QA (cuando el
-  equipo lo requiera).
+- **Estado:** ✅ **resuelto** — se creó el reclutador `reclutador10@gmail.com` en
+  `talento-qa` (`src/scripts/createUser.ts`, password `Reclutador123!`, rol `Reclutador`)
+  y se verificó con `psql`. Queda solo la re-validación manual del login por QA.
 
 ### 2. Auditoría de acciones devuelve 401
 
