@@ -153,6 +153,7 @@ if [ -d "ptd-talento-back/.git" ]; then
   cd "$OLDPWD"
 else
   echo "${ROJO}⚠ ptd-talento-back no existe, clonando...${RESET}"
+  gh auth switch
   git clone https://github.com/Cincinnatus-Institute-of-Craftsmanship/ptd-talento-back.git
   cd ptd-talento-back && git checkout dev
   git remote add dizzi1222 https://github.com/dizzi1222/ptd-talento-back.git
@@ -173,6 +174,7 @@ else
   cd ptd-talento-front && git checkout dev
   git remote add dizzi1222 https://github.com/dizzi1222/ptd-talento-front.git
   cd ..
+  gh auth switch
 fi
 
 
