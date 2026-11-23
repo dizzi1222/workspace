@@ -30,6 +30,7 @@ Workspace con proyectos como submódulos y repos independientes.
 | 22  | `dbtui.nvim`                              | — Launcher TUI de PostgreSQL/MongoDB para Neovim (LazySQL + mongosh)      |
 | 23  | `neocursor.nvim`                          | — Predicciones next-edit estilo Cursor para Neovim (ghost text)           |
 | 24  | `opencode.nvim`                           | — Integración de OpenCode dentro de Neovim                                |
+| 25  | `premid-activities`                       | — Fork de PreMiD/Activities: actividad de Discord para Exercism (systemd) |
 
 > ⭐ `dhardi-laravel` es un **submódulo** de `dizzi1222/dhardi-laravel` (repo público propio).
 > Es el portfolio en Laravel 13/Inertia 3/React 19 con i18n en DE/ES/EN, un gateway LLM con
@@ -63,6 +64,8 @@ chmod +x setup.sh
 > 🗄️ `dbtui.nvim` es el plugin de **Neovim** que detecta conexiones PostgreSQL/MongoDB por proyecto y las abre en un terminal flotante (LazySQL / `mongosh`). Neovim 0.10+, sin build.
 
 > 🧩 `neocursor.nvim` y `opencode.nvim` son plugins de **Neovim** (sin build): predicciones next-edit tipo Cursor (ghost text) e integración de OpenCode en el editor.
+
+> 🎮 `premid-activities` es el **fork** `dizzi1222/premid-activities` de [PreMiD/Activities](https://github.com/PreMiD/Activities) con la actividad **Exercism** (`websites/E/Exercism`, App ID de Discord `1574465540955701381`). El `setup.sh` corre `npm ci` (que también compila el CLI `pmd`) e instala el servicio de usuario `premid-dev` ([`systemd/premid-dev.service`](systemd/premid-dev.service)), que deja `pmd dev Exercism` siempre corriendo. Remote `upstream` → PreMiD/Activities para sincronizar y abrir el PR al store.
 
 ## 📐 Breakpoints móviles (convención)
 
@@ -223,6 +226,28 @@ binario de la conexión que uses. Para desarrollo local se carga por `dir`
 
 Sin build ni dependencias de sistema; se cargan con lazy.nvim (o por `dir` para
 desarrollo local).
+
+### premid-activities (actividad de PreMiD para Exercism)
+
+```bash
+systemctl --user status premid-dev     # pmd dev Exercism (lo instala setup.sh)
+journalctl --user -u premid-dev -f     # "Activity sent to the extension!" = cargada
+```
+
+En la extensión PreMiD: **Ajustes → Activity Developer** activado. Después de **cada reinicio
+del navegador**, PreMiD lo apaga y borra las actividades Dev (lo hace el código de la extensión).
+Vuelve a activarlo y el servicio reenvía la actividad sola: la extensión reintenta la conexión
+a `ws://localhost:3021` cada 5 s. Exercism se activa sola al abrir exercism.org.
+
+Desarrollo: guardar cambios en `websites/E/Exercism/` recarga la actividad (hot reload).
+
+```bash
+cd premid-activities
+npx pmd build Exercism --validate --zip   # zip para "Load built zip" (Brave): websites/E/Exercism/dist/
+npx eslint websites/E/Exercism            # lint del repo (lo exige el PR al store)
+git fetch upstream && git merge upstream/main   # sincronizar con PreMiD
+# Otra actividad: systemctl --user stop premid-dev && npx pmd dev OtraActividad
+```
 
 ### PTD-Talento Back (Express + TypeORM + PostgreSQL)
 

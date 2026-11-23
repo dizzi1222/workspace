@@ -10,6 +10,11 @@ CYAN=$(tput setaf 6)
 BLANCO=$(tput setaf 7)
 RESET=$(tput sgr0)
 
+# Raíz absoluta del workspace. Con `./setup.sh`, "$(dirname "$0")" vale "." y los
+# `cd` de abajo volvían a la carpeta actual (el último submódulo), no a la raíz.
+WORKSPACE_DIR="$(cd "$(dirname "$0")" && pwd)"
+cd "$WORKSPACE_DIR"
+
 echo "${VERDE}🚀 Configurando workspace...${RESET}"
 echo ""
 
@@ -36,6 +41,7 @@ git submodule update --init --recursive neocursor.nvim
 git submodule update --init --recursive opencode.nvim
 git submodule update --init --recursive dataimpulse-mcp
 git submodule update --init --recursive dhardi-laravel
+git submodule update --init --recursive premid-activities
 
 echo ""
 echo "${AMARILLO}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${RESET}"
@@ -81,9 +87,10 @@ cd ../dbtui.nvim/ && git checkout main
 cd ../neocursor.nvim/ && git checkout main
 cd ../opencode.nvim/ && git checkout main
 cd ../dataimpulse-mcp/ && git checkout main
+cd ../premid-activities/ && git checkout main
 
 # Volver a la raíz del workspace
-cd "$(dirname "$0")"
+cd "$WORKSPACE_DIR"
 
 echo ""
 echo "${AMARILLO}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${RESET}"
@@ -136,12 +143,33 @@ fi
 
 echo ""
 echo "${AMARILLO}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${RESET}"
+echo "${CYAN}Instalando premid-activities (PreMiD: Exercism) + servicio systemd...${RESET}"
+echo ""
+
+# Fork de PreMiD/Activities. `npm ci` también compila el CLI `pmd` (script prepare).
+# El servicio premid-dev deja `pmd dev Exercism` corriendo: al activar "Activity Developer"
+# en la extensión, la actividad se carga sola (PreMiD lo apaga en cada arranque del navegador).
+if [ -d "premid-activities" ]; then
+  cd premid-activities
+  git remote add upstream https://github.com/PreMiD/Activities.git 2>/dev/null
+  npm ci
+  cd ..
+
+  if command -v systemctl >/dev/null 2>&1; then
+    install -Dm644 systemd/premid-dev.service ~/.config/systemd/user/premid-dev.service
+    systemctl --user daemon-reload
+    systemctl --user enable --now premid-dev.service
+  fi
+fi
+
+echo ""
+echo "${AMARILLO}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${RESET}"
 echo "${AZUL}Paso 5: Configurando repos independientes (ptd-talento)...${RESET}"
 echo "${AMARILLO}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${RESET}"
 echo ""
 
 # Volver a la raiz del workspace
-cd "$(dirname "$0")"
+cd "$WORKSPACE_DIR"
 
 # ptd-talento-back
 if [ -d "ptd-talento-back/.git" ]; then
