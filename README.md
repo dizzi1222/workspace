@@ -65,7 +65,7 @@ chmod +x setup.sh
 
 > 🧩 `neocursor.nvim` y `opencode.nvim` son plugins de **Neovim** (sin build): predicciones next-edit tipo Cursor (ghost text) e integración de OpenCode en el editor.
 
-> 🎮 `premid-activities` es el **fork** `dizzi1222/premid-activities` de [PreMiD/Activities](https://github.com/PreMiD/Activities) con la actividad **Exercism** (`websites/E/Exercism`, App ID de Discord `1574465540955701381`). El `setup.sh` corre `npm ci` (que también compila el CLI `pmd`) e instala el servicio de usuario `premid-dev` ([`systemd/premid-dev.service`](systemd/premid-dev.service)), que deja `pmd dev Exercism` siempre corriendo. Remote `upstream` → PreMiD/Activities para sincronizar y abrir el PR al store.
+> 🎮 `premid-activities` es el **fork** `dizzi1222/premid-activities` de [PreMiD/Activities](https://github.com/PreMiD/Activities) con la actividad **Exercism** (`websites/E/Exercism`, App ID de Discord `1574465540955701381`). El instalador [`systemd/premid-dev-install.sh`](systemd/premid-dev-install.sh) (lo llaman `setup.sh` y `~/bazzite-install.sh`) corre `npm ci` si faltan las dependencias (también compila el CLI `pmd`) e instala el servicio de usuario `premid-dev` ([`systemd/premid-dev.service`](systemd/premid-dev.service)), que deja `pmd dev Exercism` siempre corriendo. Remote `upstream` → PreMiD/Activities para sincronizar y abrir el PR al store.
 
 ## 📐 Breakpoints móviles (convención)
 

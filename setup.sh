@@ -146,20 +146,11 @@ echo "${AMARILLO}━━━━━━━━━━━━━━━━━━━━━
 echo "${CYAN}Instalando premid-activities (PreMiD: Exercism) + servicio systemd...${RESET}"
 echo ""
 
-# Fork de PreMiD/Activities. `npm ci` también compila el CLI `pmd` (script prepare).
-# El servicio premid-dev deja `pmd dev Exercism` corriendo: al activar "Activity Developer"
-# en la extensión, la actividad se carga sola (PreMiD lo apaga en cada arranque del navegador).
-if [ -d "premid-activities" ]; then
-  cd premid-activities
-  git remote add upstream https://github.com/PreMiD/Activities.git 2>/dev/null
-  npm ci
-  cd ..
-
-  if command -v systemctl >/dev/null 2>&1; then
-    install -Dm644 systemd/premid-dev.service ~/.config/systemd/user/premid-dev.service
-    systemctl --user daemon-reload
-    systemctl --user enable --now premid-dev.service
-  fi
+# Fork de PreMiD/Activities. El servicio premid-dev deja `pmd dev Exercism` corriendo: al
+# activar "Activity Developer" en la extensión, la actividad se carga sola (PreMiD lo apaga
+# en cada arranque del navegador). El instalador es compartido con bazzite-install.sh.
+if [ -d "premid-activities" ] && command -v systemctl >/dev/null 2>&1; then
+  bash systemd/premid-dev-install.sh
 fi
 
 echo ""
