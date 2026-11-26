@@ -30,7 +30,7 @@ Workspace con proyectos como submódulos y repos independientes.
 | 22  | `dbtui.nvim`                              | — Launcher TUI de PostgreSQL/MongoDB para Neovim (LazySQL + mongosh)      |
 | 23  | `neocursor.nvim`                          | — Predicciones next-edit estilo Cursor para Neovim (ghost text)           |
 | 24  | `opencode.nvim`                           | — Integración de OpenCode dentro de Neovim                                |
-| 25  | `premid-activities`                       | — Fork de PreMiD/Activities: actividad de Discord para Exercism (systemd) |
+| 25  | `premid-activities`                       | — Fork de PreMiD/Activities: actividades de Discord para Exercism y Mimo (systemd) |
 
 > ⭐ `dhardi-laravel` es un **submódulo** de `dizzi1222/dhardi-laravel` (repo público propio).
 > Es el portfolio en Laravel 13/Inertia 3/React 19 con i18n en DE/ES/EN, un gateway LLM con
@@ -65,7 +65,7 @@ chmod +x setup.sh
 
 > 🧩 `neocursor.nvim` y `opencode.nvim` son plugins de **Neovim** (sin build): predicciones next-edit tipo Cursor (ghost text) e integración de OpenCode en el editor.
 
-> 🎮 `premid-activities` es el **fork** `dizzi1222/premid-activities` de [PreMiD/Activities](https://github.com/PreMiD/Activities) con la actividad **Exercism** (`websites/E/Exercism`, App ID de Discord `1574465540955701381`). El instalador [`systemd/premid-dev-install.sh`](systemd/premid-dev-install.sh) (lo llaman `setup.sh` y `~/bazzite-install.sh`) corre `npm ci` si faltan las dependencias (también compila el CLI `pmd`) e instala el servicio de usuario `premid-dev` ([`systemd/premid-dev.service`](systemd/premid-dev.service)), que deja `pmd dev Exercism` siempre corriendo. Remote `upstream` → PreMiD/Activities para sincronizar y abrir el PR al store.
+> 🎮 `premid-activities` es el **fork** `dizzi1222/premid-activities` de [PreMiD/Activities](https://github.com/PreMiD/Activities) con las actividades **Exercism** (`websites/E/Exercism`, App ID de Discord `1574465540955701381`) y **Mimo** (`websites/M/Mimo`, App ID de Discord `1575302343379918969`). El instalador [`systemd/premid-dev-install.sh`](systemd/premid-dev-install.sh) (lo llaman `setup.sh` y `~/bazzite-install.sh`) corre `npm ci` si faltan las dependencias (también compila el CLI `pmd`) e instala el servicio de usuario `premid-dev` ([`systemd/premid-dev.service`](systemd/premid-dev.service)), que deja [`premid-serve.mjs`](systemd/premid-serve.mjs) siempre sirviendo ambas actividades a la extensión. Remote `upstream` → PreMiD/Activities para sincronizar y abrir el PR al store.
 
 ## 📐 Breakpoints móviles (convención)
 
@@ -227,27 +227,44 @@ binario de la conexión que uses. Para desarrollo local se carga por `dir`
 Sin build ni dependencias de sistema; se cargan con lazy.nvim (o por `dir` para
 desarrollo local).
 
-### premid-activities (actividad de PreMiD para Exercism)
+### premid-activities (actividades de PreMiD: Exercism y Mimo)
 
 ```bash
-systemctl --user status premid-dev     # pmd dev Exercism (lo instala setup.sh)
-journalctl --user -u premid-dev -f     # "Activity sent to the extension!" = cargada
+systemctl --user status premid-dev     # premid-serve: Exercism + Mimo (lo instala setup.sh)
+journalctl --user -u premid-dev -f     # "Activity sent to the extension: <Actividad>" = cargada
 ```
 
 En la extensión PreMiD: **Ajustes → Activity Developer** activado. Después de **cada reinicio
 del navegador**, PreMiD lo apaga y borra las actividades Dev (lo hace el código de la extensión).
-Vuelve a activarlo y el servicio reenvía la actividad sola: la extensión reintenta la conexión
-a `ws://localhost:3021` cada 5 s. Exercism se activa sola al abrir exercism.org.
+Vuelve a activarlo y el servicio reenvía las actividades solas: la extensión reintenta la conexión
+a `ws://localhost:3021` cada 5 s. Cada actividad se activa sola al abrir exercism.org o mimo.org.
 
-Desarrollo: guardar cambios en `websites/E/Exercism/` recarga la actividad (hot reload).
+Desde el menú (`Super+Z` → Apps → **PreMiD Exercism** / **PreMiD Mimo**) se lanza
+`~/scripts/premid-activity.sh <Actividad>` (dotfiles-dizzi): arranca el servicio si está parado
+(o `premid-serve.mjs` si no hay unidad), abre la web y avisa si hay que activar Activity Developer.
+
+El servicio ejecuta [`systemd/premid-serve.mjs`](systemd/premid-serve.mjs), una versión ligera de
+`pmd dev` (~30 MiB frente a ~240 MiB): envía el `dist/` de cada actividad con el mismo mensaje que
+`pmd dev` y solo compila (`pmd build`) al arrancar si hace falta o al guardar cambios en
+`websites/<letra>/<Actividad>/`, que se recargan solos. Otra actividad: añádela al `ExecStart`
+de [`systemd/premid-dev.service`](systemd/premid-dev.service) y vuelve a ejecutar el instalador.
+
+Además antepone a `presence.js` un *shim* para PreMiD ≤2.11, la versión de Zen/Firefox (PreMiD no
+publica otra para Firefox): en modo desarrollador ignora `<Actividad>.json` y Discord mostraría las
+claves tal cual (`exercism.viewExercise`). El shim las rellena con los textos de ese archivo; en
+2.14+ (Brave) y en el store no cambia nada. Con `PREMID_STRINGS_SHIM=0` el mensaje es idéntico al de
+`pmd dev`.
 
 ```bash
 cd premid-activities
 npx pmd build Exercism --validate --zip   # zip para "Load built zip" (Brave): websites/E/Exercism/dist/
-npx eslint websites/E/Exercism            # lint del repo (lo exige el PR al store)
+npx eslint websites/E/Exercism websites/M/Mimo   # lint del repo (lo exige el PR al store)
 git fetch upstream && git merge upstream/main   # sincronizar con PreMiD
-# Otra actividad: systemctl --user stop premid-dev && npx pmd dev OtraActividad
 ```
+
+PRs al store: [PreMiD/Activities#11527](https://github.com/PreMiD/Activities/pull/11527) (Exercism) y
+[PreMiD/Activities#11541](https://github.com/PreMiD/Activities/pull/11541) (Mimo).
+Las imágenes de `metadata.json` viven en la rama `premid-assets` del fork.
 
 ### PTD-Talento Back (Express + TypeORM + PostgreSQL)
 

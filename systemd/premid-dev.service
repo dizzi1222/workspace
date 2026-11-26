@@ -1,16 +1,17 @@
-# PreMiD: deja `pmd dev Exercism` siempre corriendo para la extensión PreMiD.
-# La extensión (con "Activity Developer" activado) se conecta a ws://localhost:3021
-# y este proceso le envía la actividad compilada; también recarga al guardar cambios.
-# Lo instala ~/workspace/setup.sh en ~/.config/systemd/user/premid-dev.service
+# PreMiD: sirve las actividades Exercism y Mimo a la extensión PreMiD (premid-serve.mjs,
+# versión ligera de `pmd dev`). La extensión, con "Activity Developer" activado, se conecta a
+# ws://localhost:3021 y recibe el dist/ de cada actividad; solo se compila (`pmd build`) al
+# arrancar si dist/ está desactualizado o al guardar cambios.
+# Lo instala ~/workspace/systemd/premid-dev-install.sh (setup.sh y ~/bazzite-install.sh).
 [Unit]
-Description=PreMiD pmd dev (actividad Exercism para la extensión PreMiD)
+Description=PreMiD: actividades Exercism y Mimo para la extensión PreMiD (premid-serve)
 Documentation=https://docs.premid.app/v1/guide/loading-activities
 
 [Service]
 Type=simple
 WorkingDirectory=%h/workspace/premid-activities
 Environment=PATH=/home/linuxbrew/.linuxbrew/bin:/usr/local/bin:/usr/bin:/bin
-ExecStart=%h/workspace/premid-activities/node_modules/.bin/pmd dev Exercism
+ExecStart=/usr/bin/env node %h/workspace/systemd/premid-serve.mjs Exercism Mimo
 Restart=on-failure
 RestartSec=10
 StandardOutput=journal

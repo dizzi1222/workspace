@@ -27,5 +27,13 @@ if ! cmp -s "$UNIT_SRC" "$UNIT"; then
   systemctl --user daemon-reload
   systemctl --user try-restart premid-dev.service
 fi
+
+# premid-serve.mjs: si cambió desde la última instalación (p. ej. tras un git pull), reinicia el servicio.
+STAMP="${XDG_STATE_HOME:-$HOME/.local/state}/premid-dev/serve.sha256"
+SUM="$(sha256sum "$WORKSPACE_DIR/systemd/premid-serve.mjs" | cut -d' ' -f1)"
+if [ "$(cat "$STAMP" 2>/dev/null)" != "$SUM" ]; then
+  systemctl --user try-restart premid-dev.service
+  install -Dm644 /dev/null "$STAMP" && echo "$SUM" >"$STAMP"
+fi
 systemctl --user enable --now premid-dev.service
-echo "  ✓ premid-dev.service activo (PreMiD: Exercism)"
+echo "  ✓ premid-dev.service activo (PreMiD: Exercism, Mimo)"
