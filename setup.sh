@@ -143,12 +143,13 @@ fi
 
 echo ""
 echo "${AMARILLO}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${RESET}"
-echo "${CYAN}Instalando premid-activities (PreMiD: Exercism) + servicio systemd...${RESET}"
+echo "${CYAN}Instalando premid-activities (PreMiD: Exercism, Mimo, CodeCrafters, CryptoZombies, Speedrun Ethereum) + servicio systemd...${RESET}"
 echo ""
 
-# Fork de PreMiD/Activities. El servicio premid-dev deja `pmd dev Exercism` corriendo: al
-# activar "Activity Developer" en la extensión, la actividad se carga sola (PreMiD lo apaga
-# en cada arranque del navegador). El instalador es compartido con bazzite-install.sh.
+# Fork de PreMiD/Activities. El servicio premid-dev deja premid-serve.mjs (versión ligera de
+# `pmd dev`) sirviendo las actividades de su ExecStart: al activar "Activity Developer" en la
+# extensión se cargan solas (PreMiD lo apaga en cada arranque del navegador). El instalador es
+# compartido con bazzite-install.sh.
 if [ -d "premid-activities" ] && command -v systemctl >/dev/null 2>&1; then
   bash systemd/premid-dev-install.sh
 fi

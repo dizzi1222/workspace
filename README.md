@@ -30,7 +30,7 @@ Workspace con proyectos como submódulos y repos independientes.
 | 22  | `dbtui.nvim`                              | — Launcher TUI de PostgreSQL/MongoDB para Neovim (LazySQL + mongosh)      |
 | 23  | `neocursor.nvim`                          | — Predicciones next-edit estilo Cursor para Neovim (ghost text)           |
 | 24  | `opencode.nvim`                           | — Integración de OpenCode dentro de Neovim                                |
-| 25  | `premid-activities`                       | — Fork de PreMiD/Activities: actividades de Discord para Exercism y Mimo (systemd) |
+| 25  | `premid-activities`                       | — Fork de PreMiD/Activities: actividades de Discord para Exercism, Mimo, CodeCrafters, CryptoZombies y Speedrun Ethereum (systemd) |
 
 > ⭐ `dhardi-laravel` es un **submódulo** de `dizzi1222/dhardi-laravel` (repo público propio).
 > Es el portfolio en Laravel 13/Inertia 3/React 19 con i18n en DE/ES/EN, un gateway LLM con
@@ -65,7 +65,7 @@ chmod +x setup.sh
 
 > 🧩 `neocursor.nvim` y `opencode.nvim` son plugins de **Neovim** (sin build): predicciones next-edit tipo Cursor (ghost text) e integración de OpenCode en el editor.
 
-> 🎮 `premid-activities` es el **fork** `dizzi1222/premid-activities` de [PreMiD/Activities](https://github.com/PreMiD/Activities) con las actividades **Exercism** (`websites/E/Exercism`, App ID de Discord `1574465540955701381`) y **Mimo** (`websites/M/Mimo`, App ID de Discord `1575302343379918969`). El instalador [`systemd/premid-dev-install.sh`](systemd/premid-dev-install.sh) (lo llaman `setup.sh` y `~/bazzite-install.sh`) corre `npm ci` si faltan las dependencias (también compila el CLI `pmd`) e instala el servicio de usuario `premid-dev` ([`systemd/premid-dev.service`](systemd/premid-dev.service)), que deja [`premid-serve.mjs`](systemd/premid-serve.mjs) siempre sirviendo ambas actividades a la extensión. Remote `upstream` → PreMiD/Activities para sincronizar y abrir el PR al store.
+> 🎮 `premid-activities` es el **fork** `dizzi1222/premid-activities` de [PreMiD/Activities](https://github.com/PreMiD/Activities) con las actividades **Exercism** (`websites/E/Exercism`, App ID de Discord `1574465540955701381`), **Mimo** (`websites/M/Mimo`, `1575302343379918969`), **CodeCrafters** (`websites/C/CodeCrafters`, `1575345735249961142`), **CryptoZombies** (`websites/C/CryptoZombies`, `1575346253439697026`) y **Speedrun Ethereum** (`websites/S/Speedrun Ethereum`, `1575345922563510392`). El instalador [`systemd/premid-dev-install.sh`](systemd/premid-dev-install.sh) (lo llaman `setup.sh` y `~/bazzite-install.sh`) corre `npm ci` si faltan las dependencias (también compila el CLI `pmd`) e instala el servicio de usuario `premid-dev` ([`systemd/premid-dev.service`](systemd/premid-dev.service)), que deja [`premid-serve.mjs`](systemd/premid-serve.mjs) siempre sirviendo las cinco actividades a la extensión. Remote `upstream` → PreMiD/Activities para sincronizar y abrir el PR al store.
 
 ## 📐 Breakpoints móviles (convención)
 
@@ -227,27 +227,30 @@ binario de la conexión que uses. Para desarrollo local se carga por `dir`
 Sin build ni dependencias de sistema; se cargan con lazy.nvim (o por `dir` para
 desarrollo local).
 
-### premid-activities (actividades de PreMiD: Exercism y Mimo)
+### premid-activities (actividades de PreMiD: Exercism, Mimo, CodeCrafters, CryptoZombies y Speedrun Ethereum)
 
 ```bash
-systemctl --user status premid-dev     # premid-serve: Exercism + Mimo (lo instala setup.sh)
+systemctl --user status premid-dev     # premid-serve: las 5 actividades (lo instala setup.sh)
 journalctl --user -u premid-dev -f     # "Activity sent to the extension: <Actividad>" = cargada
 ```
 
 En la extensión PreMiD: **Ajustes → Activity Developer** activado. Después de **cada reinicio
 del navegador**, PreMiD lo apaga y borra las actividades Dev (lo hace el código de la extensión).
 Vuelve a activarlo y el servicio reenvía las actividades solas: la extensión reintenta la conexión
-a `ws://localhost:3021` cada 5 s. Cada actividad se activa sola al abrir exercism.org o mimo.org.
+a `ws://localhost:3021` cada 5 s. Cada actividad se activa sola al abrir su web (exercism.org, mimo.org, app.codecrafters.io,
+cryptozombies.io o speedrunethereum.com).
 
-Desde el menú (`Super+Z` → Apps → **PreMiD Exercism** / **PreMiD Mimo**) se lanza
-`~/scripts/premid-activity.sh <Actividad>` (dotfiles-dizzi): arranca el servicio si está parado
-(o `premid-serve.mjs` si no hay unidad), abre la web y avisa si hay que activar Activity Developer.
+Desde el menú (`Super+Z` → Apps → **PreMiD Actividades**) se lanza
+`~/scripts/premid-activity.sh all` (dotfiles-dizzi): arranca el servicio si está parado (o
+`premid-serve.mjs` si no hay unidad) y avisa si hay que activar Activity Developer; la extensión
+recibe las 5 a la vez. `premid-activity.sh <Actividad>` carga lo mismo y además abre su web.
 
 El servicio ejecuta [`systemd/premid-serve.mjs`](systemd/premid-serve.mjs), una versión ligera de
 `pmd dev` (~30 MiB frente a ~240 MiB): envía el `dist/` de cada actividad con el mismo mensaje que
 `pmd dev` y solo compila (`pmd build`) al arrancar si hace falta o al guardar cambios en
 `websites/<letra>/<Actividad>/`, que se recargan solos. Otra actividad: añádela al `ExecStart`
-de [`systemd/premid-dev.service`](systemd/premid-dev.service) y vuelve a ejecutar el instalador.
+de [`systemd/premid-dev.service`](systemd/premid-dev.service) (nombres con espacios entre comillas dobles:
+`"Speedrun Ethereum"`) y vuelve a ejecutar el instalador.
 
 Además antepone a `presence.js` un *shim* para PreMiD ≤2.11, la versión de Zen/Firefox (PreMiD no
 publica otra para Firefox): en modo desarrollador ignora `<Actividad>.json` y Discord mostraría las
@@ -258,12 +261,15 @@ claves tal cual (`exercism.viewExercise`). El shim las rellena con los textos de
 ```bash
 cd premid-activities
 npx pmd build Exercism --validate --zip   # zip para "Load built zip" (Brave): websites/E/Exercism/dist/
-npx eslint websites/E/Exercism websites/M/Mimo   # lint del repo (lo exige el PR al store)
+npx eslint websites/E/Exercism websites/M/Mimo websites/C/CodeCrafters websites/C/CryptoZombies "websites/S/Speedrun Ethereum"   # lint (lo exige el PR al store)
 git fetch upstream && git merge upstream/main   # sincronizar con PreMiD
 ```
 
-PRs al store: [PreMiD/Activities#11527](https://github.com/PreMiD/Activities/pull/11527) (Exercism) y
-[PreMiD/Activities#11541](https://github.com/PreMiD/Activities/pull/11541) (Mimo).
+PRs al store: [PreMiD/Activities#11527](https://github.com/PreMiD/Activities/pull/11527) (Exercism),
+[#11541](https://github.com/PreMiD/Activities/pull/11541) (Mimo),
+[#11543](https://github.com/PreMiD/Activities/pull/11543) (CodeCrafters),
+[#11544](https://github.com/PreMiD/Activities/pull/11544) (CryptoZombies) y
+[#11545](https://github.com/PreMiD/Activities/pull/11545) (Speedrun Ethereum).
 Las imágenes de `metadata.json` viven en la rama `premid-assets` del fork.
 
 ### PTD-Talento Back (Express + TypeORM + PostgreSQL)

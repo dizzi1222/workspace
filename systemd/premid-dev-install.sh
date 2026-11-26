@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Instala o actualiza el servicio de usuario premid-dev (PreMiD: actividad de Exercism).
+# Instala o actualiza el servicio de usuario premid-dev (PreMiD: las actividades de su ExecStart).
 # Lo llaman ~/workspace/setup.sh y ~/dotfiles-dizzi/home/bazzite-install.sh.
 # Se puede repetir sin riesgo: solo rehace lo que falta o cambió.
 set -euo pipefail
@@ -36,4 +36,6 @@ if [ "$(cat "$STAMP" 2>/dev/null)" != "$SUM" ]; then
   install -Dm644 /dev/null "$STAMP" && echo "$SUM" >"$STAMP"
 fi
 systemctl --user enable --now premid-dev.service
-echo "  ✓ premid-dev.service activo (PreMiD: Exercism, Mimo)"
+# Actividades del ExecStart, una por argumento (xargs respeta "Speedrun Ethereum").
+ACTIVITIES=$(sed -n 's/^ExecStart=.*premid-serve\.mjs[[:space:]]*//p' "$UNIT_SRC" | xargs -r printf '%s, ')
+echo "  ✓ premid-dev.service activo (PreMiD: ${ACTIVITIES%, })"
